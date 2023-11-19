@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import styles from '@styles/components/ghostList.module.scss';
 import { Ghost } from '@/pages/game/Vote';
 import GhostItem from '@components/vote/GhostItem';
@@ -10,20 +10,18 @@ const GhostList = ({ pocketId }: { pocketId: string | null }) => {
   const [data, setData] = useState({});
   const [ghosts, setGhosts] = useState<Ghost[]>([]);
 
-  useEffect(() => {
-    const setGame = async () => {
-      try {
-        const gameData = await getGameData(pocketId as string);
-        setGhosts(gameData.vote);
-        setData(gameData);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-    setGame();
-  }, []);
+  const setGame = async () => {
+    try {
+      const gameData = await getGameData(pocketId as string);
+      setGhosts(gameData.vote);
+      setData(gameData);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
-  const selectMafia = (id: string) => {
+  const selectMafia = async (id: string) => {
+    await setGame();
     const updateGhost = ghosts.find((ghost) => ghost.id === id);
     const newCount = updateGhost!.count + 1;
     return { ...updateGhost, count: newCount };
